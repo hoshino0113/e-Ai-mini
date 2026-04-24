@@ -32,8 +32,14 @@ def ask(request: AskRequest):
             "message": f"No tool executed for tool: {tool_name}"
         }
 
+    final_answer = llm.generate_final_answer(
+        question=request.question,
+        tool_result=tool_result
+    )
+
     return {
         "question": request.question,
         "decision": decision,
-        "tool_result": tool_result
+        "tool_result": tool_result,
+        "final_answer": final_answer
     }

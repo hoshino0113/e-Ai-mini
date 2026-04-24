@@ -1,6 +1,6 @@
 import json
 import requests
-from app.prompts import SYSTEM_PROMPT
+from app.prompts import SYSTEM_PROMPT, FINAL_ANSWER_PROMPT
 
 
 def extract_json(text: str) -> dict:
@@ -46,3 +46,32 @@ class OllamaClient:
                 "input": question,
                 "raw_response": content
             }
+        
+    def generate_final_answer(self, question: str, tool_result: dict) -> str:
+        payload = {
+            "model": self.model,
+            "stream": False,
+            "messages": [
+                {"role": "system", "content": FINAL_ANSWER_PROMPT},
+                {
+                    "role": "user",
+                    "content": f"""
+                    User question:
+                    {question}
+
+                    Tool result:
+                    {tool_result}
+
+                    Write the final answer.
+                    """
+                                }
+                            ],
+                            "options": {
+                                "temperature": 0
+                            }
+                        }
+
+        response = requests.post(self.url, json=payload, timeout=120)
+        response.raise_for_status()
+
+        return response.json()["message"]["content"]

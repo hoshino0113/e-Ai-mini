@@ -24,3 +24,13 @@ Format:
   "input": "cleaned user request or key entity"
 }
 """
+
+FINAL_ANSWER_PROMPT = """
+You are an enterprise AI assistant.
+
+Use the provided tool result to answer the user's question.
+Do not invent information.
+If the tool result does not contain enough information, say what is missing.
+
+Keep the answer clear and concise.
+"""
